@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>專業線上報價單產生器 - Quotation Generator</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 圖示庫 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Microsoft JhengHei', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 螢幕預覽與列印樣式優化 */
+    @media print {
+      /* 隱藏不需要列印的UI元素 */
+      .no-print {
+        display: none !important;
+      }
+      
+      body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+      }
+
+      /* 強制 A4 尺寸與邊距 */
+      @page {
+        size: A4 portrait;
+        margin: 1.2cm 1cm;
+      }
+
+      .print-container {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+
+      /* 防止表格列中斷 */
+      tr {
+        page-break-inside: avoid;
+      }
+      
+      /* 強制背景顏色與文字色彩印出 */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      input, textarea, select {
+        border: none !important;
+        background: transparent !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        padding: 0 !important;
+        resize: none !important;
+      }
+    }
+
+    /* 自訂滾動條 */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen font-sans flex flex-col">
+
+  <!-- 頂部操作列 (非列印區域) -->
+  <header class="no-print bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-brand-500 p-2 rounded-lg">
+          <i class="fa-solid fa-file-invoice text-xl text-white"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight">線上報價單產生器</h1>
+          <p class="text-xs text-slate-400">極簡、專業、即時預覽與 PDF 導出</p>
+        </div>
+      </div>
+
+      <!-- 功能按鈕區 -->
+      <div class="flex items-center space-x-2 flex-wrap gap-y-2">
+        <button onclick="loadSampleData()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-md border border-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> 載入範例資料
+        </button>
+        <button onclick="clearForm()" class="px-3 py-1.5 bg-slate-800 hover:bg-red-950/40 text-red-300 hover:text-red-200 text-xs rounded-md border border-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-trash-can"></i> 清空資料
+        </button>
+        <button onclick="window.print()" class="px-4 py-1.5 bg-brand-600 hover:bg-brand-500 text-white font-medium text-xs rounded-md shadow transition flex items-center gap-1.5">
+          <i class="fa-solid fa-print"></i> 導出 PDF / 列印
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主要內容區 -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 lg:p-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- 報價單容器 (標準 A4 視圖) -->
+      <div id="quotation-paper" class="lg:col-span-12 print-container bg-white rounded-xl shadow-xl border border-slate-200 p-6 md:p-10 max-w-4xl mx-auto w-full transition-all">
+        
+        <!-- 報價單頭部：公司 Logo + 標題與基本資料 -->
+        <div class="flex flex-col md:flex-row justify-between items-start border-b border-slate-200 pb-6 mb-6 gap-6">
+          
+          <!-- 公司 Logo 與賣方資訊 -->
+          <div class="w-full md:w-1/2 space-y-3">
+            <div class="relative group w-48 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center overflow-hidden">
+              <img id="logo-preview" src="" alt="Company Logo" class="hidden max-h-full max-w-full object-contain p-1">
+              <div id="logo-placeholder" class="text-center p-2">
+                <i class="fa-solid fa-cloud-arrow-up text-slate-400 text-lg mb-1"></i>
+                <p class="text-xs text-slate-500 no-print">點擊上傳公司 Logo</p>
+              </div>
+              <input type="file" id="logo-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer no-print" onchange="handleImageUpload(event, 'logo-preview', 'logo-placeholder')">
+            </div>
+
+            <!-- 賣方基本資料 -->
+            <div class="space-y-1 text-sm">
+              <input type="text" id="seller-name" placeholder="您的公司名稱 / 賣方姓名" class="w-full font-bold text-slate-900 border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5 text-base" oninput="saveData()">
+              <div class="grid grid-cols-1 gap-1 text-slate-600 text-xs">
+                <input type="text" id="seller-tax-id" placeholder="統一編號（選填）" class="border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+                <input type="text" id="seller-contact" placeholder="聯絡人 / 電話" class="border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+                <input type="text" id="seller-email" placeholder="Email" class="border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+                <input type="text" id="seller-address" placeholder="公司地址" class="border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+              </div>
+            </div>
+          </div>
+
+          <!-- 報價單單號與日期資訊 -->
+          <div class="w-full md:w-1/2 flex flex-col items-start md:items-end text-right space-y-3">
+            <h2 class="text-3xl font-extrabold text-brand-700 tracking-wider uppercase">報 價 單</h2>
+            <p class="text-xs text-slate-400 font-mono tracking-widest uppercase">QUOTATION</p>
+            
+            <div class="w-full max-w-xs space-y-1.5 text-xs text-slate-600 pt-2">
+              <div class="flex justify-between items-center">
+                <span class="font-medium text-slate-500">報價單號：</span>
+                <input type="text" id="quote-number" class="font-mono font-semibold text-slate-800 text-right border-b border-slate-200 focus:border-brand-500 focus:outline-none px-1 py-0.5 w-36" oninput="saveData()">
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="font-medium text-slate-500">開立日期：</span>
+                <input type="date" id="quote-date" class="text-slate-800 text-right border-b border-slate-200 focus:border-brand-500 focus:outline-none px-1 py-0.5 w-36" oninput="saveData()">
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="font-medium text-slate-500">有效期限：</span>
+                <input type="date" id="quote-expiry" class="text-slate-800 text-right border-b border-slate-200 focus:border-brand-500 focus:outline-none px-1 py-0.5 w-36" oninput="saveData()">
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="font-medium text-slate-500">付款條件：</span>
+                <input type="text" id="quote-payment-terms" placeholder="例如：簽約付 30%" class="text-slate-800 text-right border-b border-slate-200 focus:border-brand-500 focus:outline-none px-1 py-0.5 w-36" oninput="saveData()">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 買方 / 客戶資訊區 -->
+        <div class="bg-slate-50/80 rounded-lg p-4 mb-6 border border-slate-200/60">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">買方 / 客戶資料 (Client Information)</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <input type="text" id="buyer-name" placeholder="客戶/公司全銜 *" class="w-full font-bold text-slate-800 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none text-sm py-0.5" oninput="saveData()">
+              <input type="text" id="buyer-tax-id" placeholder="客戶統一編號" class="w-full text-xs text-slate-600 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+              <input type="text" id="buyer-contact" placeholder="聯絡人姓名 / 職稱" class="w-full text-xs text-slate-600 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+            </div>
+            <div class="space-y-1">
+              <input type="text" id="buyer-phone" placeholder="聯絡電話" class="w-full text-xs text-slate-600 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+              <input type="text" id="buyer-email" placeholder="客戶 Email" class="w-full text-xs text-slate-600 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+              <input type="text" id="buyer-address" placeholder="送貨/帳單地址" class="w-full text-xs text-slate-600 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+            </div>
+          </div>
+        </div>
+
+        <!-- 報價項目列表 -->
+        <div class="overflow-x-auto mb-6">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b-2 border-slate-800 text-xs font-bold text-slate-700 uppercase bg-slate-50">
+                <th class="py-2.5 px-3 w-12 text-center">#</th>
+                <th class="py-2.5 px-3">品名 / 服務描述</th>
+                <th class="py-2.5 px-3 w-20 text-right">數量</th>
+                <th class="py-2.5 px-3 w-20 text-center">單位</th>
+                <th class="py-2.5 px-3 w-28 text-right">單價</th>
+                <th class="py-2.5 px-3 w-32 text-right">小計</th>
+                <th class="py-2.5 px-3 w-10 text-center no-print"></th>
+              </tr>
+            </thead>
+            <tbody id="items-table-body" class="divide-y divide-slate-200 text-sm">
+              <!-- 動態渲染品項 -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 新增項目按鈕 -->
+        <div class="mb-6 no-print">
+          <button onclick="addItem()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-md border border-slate-300 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-plus text-brand-600"></i> 新增品項
+          </button>
+        </div>
+
+        <!-- 金額計算與稅額設定 -->
+        <div class="flex flex-col md:flex-row justify-between items-start gap-6 border-t border-slate-200 pt-4 mb-6">
+          
+          <!-- 貨幣選擇與說明 -->
+          <div class="w-full md:w-1/2 space-y-3">
+            <div class="flex items-center gap-2 no-print">
+              <label for="currency-select" class="text-xs font-medium text-slate-500">貨幣單位：</label>
+              <select id="currency-select" onchange="calculateTotals(); saveData();" class="text-xs border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none focus:border-brand-500">
+                <option value="NT$">TWD (NT$)</option>
+                <option value="$">USD ($)</option>
+                <option value="€">EUR (€)</option>
+                <option value="¥">JPY (¥)</option>
+                <option value="HK$">HKD (HK$)</option>
+              </select>
+            </div>
+            <p class="text-xs text-slate-400 italic">備註：本報價單金額均以選擇之幣別計價，有效期限內有效。</p>
+          </div>
+
+          <!-- 金額小計與總計 -->
+          <div class="w-full md:w-5/12 space-y-2 text-xs text-slate-600">
+            <div class="flex justify-between items-center py-1">
+              <span>項目小計 (Subtotal)</span>
+              <span id="subtotal-val" class="font-mono font-medium text-sm text-slate-800">NT$ 0</span>
+            </div>
+
+            <!-- 折扣設定 -->
+            <div class="flex justify-between items-center py-1">
+              <div class="flex items-center gap-1">
+                <span>整單折扣 (Discount)</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="text-slate-400">-</span>
+                <input type="number" id="discount-input" min="0" value="0" placeholder="0" class="w-20 text-right font-mono border-b border-slate-200 focus:border-brand-500 focus:outline-none px-1 py-0.5" oninput="calculateTotals(); saveData();">
+              </div>
+            </div>
+
+            <!-- 稅率選擇 -->
+            <div class="flex justify-between items-center py-1">
+              <div class="flex items-center gap-1">
+                <span class="no-print">營業稅</span>
+                <select id="tax-rate-select" onchange="calculateTotals(); saveData();" class="no-print text-xs border border-slate-200 rounded px-1 py-0.5 bg-white">
+                  <option value="0.05">5% (應稅)</option>
+                  <option value="0">0% (免稅/零稅率)</option>
+                </select>
+                <span class="hidden print:inline">營業稅 (5%)</span>
+              </div>
+              <span id="tax-val" class="font-mono font-medium text-slate-800">NT$ 0</span>
+            </div>
+
+            <div class="border-t-2 border-slate-800 pt-2 flex justify-between items-center text-slate-900">
+              <span class="font-bold text-sm">最終總計 (Total)</span>
+              <span id="total-val" class="font-mono font-extrabold text-xl text-brand-700">NT$ 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 匯款資訊與備註條款 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-200 pt-6 text-xs">
+          
+          <!-- 匯款帳號 -->
+          <div class="space-y-1.5 bg-slate-50 p-3 rounded border border-slate-200/80">
+            <h4 class="font-bold text-slate-700 flex items-center gap-1">
+              <i class="fa-solid fa-building-columns text-slate-500"></i> 付款 / 匯款帳號資訊
+            </h4>
+            <textarea id="bank-info" rows="3" placeholder="銀行名稱：台灣銀行&#10;戶名：某某股份有限公司&#10;帳號：123-456-7890" class="w-full bg-transparent border border-transparent hover:border-slate-300 focus:border-brand-500 focus:bg-white focus:outline-none p-1 rounded resize-y" oninput="saveData()"></textarea>
+          </div>
+
+          <!-- 條款與細則 -->
+          <div class="space-y-1.5 bg-slate-50 p-3 rounded border border-slate-200/80">
+            <h4 class="font-bold text-slate-700 flex items-center gap-1">
+              <i class="fa-solid fa-clipboard-list text-slate-500"></i> 條款與備註 (Terms & Conditions)
+            </h4>
+            <textarea id="terms-info" rows="3" placeholder="1. 本報價單回簽後視同正式訂單。&#10;2. 款項請於發票開立後 30 天內付清。&#10;3. 若專案需求變更，費用將另行報價。" class="w-full bg-transparent border border-transparent hover:border-slate-300 focus:border-brand-500 focus:bg-white focus:outline-none p-1 rounded resize-y" oninput="saveData()"></textarea>
+          </div>
+
+        </div>
+
+        <!-- 簽名蓋章區 -->
+        <div class="grid grid-cols-2 gap-8 pt-10 mt-6 border-t border-slate-200 text-xs">
+          <!-- 買方簽認 -->
+          <div class="space-y-2">
+            <p class="font-bold text-slate-700">客戶確認簽章 (Client Acceptance)</p>
+            <div class="h-24 border-b border-slate-300 flex items-end justify-start pb-1 text-slate-400">
+              <span>簽署人：__________________ 日期：____/____/____</span>
+            </div>
+          </div>
+
+          <!-- 賣方蓋章 -->
+          <div class="space-y-2 relative">
+            <p class="font-bold text-slate-700">報價單位簽章 (Authorized Signature)</p>
+            <div class="h-24 border-b border-slate-300 relative flex items-center justify-center">
+              <img id="stamp-preview" src="" alt="Stamp/Signature" class="hidden max-h-20 object-contain z-10">
+              <div id="stamp-placeholder" class="text-center no-print cursor-pointer">
+                <i class="fa-solid fa-stamp text-slate-300 text-2xl hover:text-slate-400"></i>
+                <p class="text-[10px] text-slate-400 mt-1">點擊上傳公司章 / 簽名檔</p>
+              </div>
+              <input type="file" id="stamp-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer no-print" onchange="handleImageUpload(event, 'stamp-preview', 'stamp-placeholder')">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="no-print bg-white border-t border-slate-200 mt-auto py-4 text-center text-xs text-slate-500">
+    <p>© 線上報價單工具 - 資料自動暫存於本地瀏覽器 (LocalStorage)</p>
+  </footer>
+
+  <!-- JavaScript 邏輯控制 -->
+  <script>
+    // 預設報價品項資料結構
+    let items = [];
+
+    // 初始化頁面
+    window.onload = function() {
+      // 設定預設日期 (今天 & 14天後)
+      const today = new Date();
+      const expiry = new Date();
+      expiry.setDate(today.getDate() + 14);
+
+      document.getElementById('quote-date').value = formatDate(today);
+      document.getElementById('quote-expiry').value = formatDate(expiry);
+      document.getElementById('quote-number').value = 'QT-' + today.getFullYear() + String(today.getMonth()+1).padStart(2, '0') + String(today.getDate()).padStart(2, '0') + '-01';
+
+      // 載入 localStorage 資料，若無則載入預設資料
+      if (!loadSavedData()) {
+        loadSampleData();
+      }
+    };
+
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    // 渲染品項表格
+    function renderItems() {
+      const tbody = document.getElementById('items-table-body');
+      tbody.innerHTML = '';
+
+      items.forEach((item, index) => {
+        const subtotal = (item.quantity || 0) * (item.price || 0);
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50/50 transition-colors";
+
+        tr.innerHTML = `
+          <td class="py-2 px-3 text-center text-slate-400 font-mono text-xs">${index + 1}</td>
+          <td class="py-2 px-3">
+            <input type="text" value="${escapeHtml(item.description)}" placeholder="品名或項目描述" 
+              class="w-full border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5"
+              oninput="updateItem(${index}, 'description', this.value)">
+          </td>
+          <td class="py-2 px-3 text-right">
+            <input type="number" min="0" step="any" value="${item.quantity}" placeholder="1" 
+              class="w-full text-right font-mono border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5"
+              oninput="updateItem(${index}, 'quantity', parseFloat(this.value) || 0)">
+          </td>
+          <td class="py-2 px-3 text-center">
+            <input type="text" value="${escapeHtml(item.unit)}" placeholder="式/件" 
+              class="w-full text-center border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5"
+              oninput="updateItem(${index}, 'unit', this.value)">
+          </td>
+          <td class="py-2 px-3 text-right">
+            <input type="number" min="0" step="any" value="${item.price}" placeholder="0" 
+              class="w-full text-right font-mono border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5"
+              oninput="updateItem(${index}, 'price', parseFloat(this.value) || 0)">
+          </td>
+          <td class="py-2 px-3 text-right font-mono font-medium text-slate-700">
+            ${getCurrencySymbol()} ${subtotal.toLocaleString('zh-TW')}
+          </td>
+          <td class="py-2 px-3 text-center no-print">
+            <button onclick="removeItem(${index})" class="text-slate-300 hover:text-red-500 transition-colors p-1">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      calculateTotals();
+    }
+
+    // 新增品項
+    function addItem() {
+      items.push({ description: '', quantity: 1, unit: '式', price: 0 });
+      renderItems();
+      saveData();
+    }
+
+    // 更新品項值
+    function updateItem(index, key, value) {
+      items[index][key] = value;
+      // 若更新數量或單價，更新小計與總額
+      if (key === 'quantity' || key === 'price') {
+        calculateTotals();
+        // 更新當前行的小計顯示
+        const tbody = document.getElementById('items-table-body');
+        const row = tbody.children[index];
+        if (row) {
+          const subtotalCell = row.children[5];
+          const subtotal = (items[index].quantity || 0) * (items[index].price || 0);
+          subtotalCell.textContent = `${getCurrencySymbol()} ${subtotal.toLocaleString('zh-TW')}`;
+        }
+      }
+      saveData();
+    }
+
+    // 刪除品項
+    function removeItem(index) {
+      items.splice(index, 1);
+      renderItems();
+      saveData();
+    }
+
+    // 取得當前貨幣符號
+    function getCurrencySymbol() {
+      return document.getElementById('currency-select').value;
+    }
+
+    // 計算小計、稅額、總額
+    function calculateTotals() {
+      const currency = getCurrencySymbol();
+      let subtotal = 0;
+
+      items.forEach(item => {
+        subtotal += (item.quantity || 0) * (item.price || 0);
+      });
+
+      const discount = parseFloat(document.getElementById('discount-input').value) || 0;
+      const discountedSubtotal = Math.max(0, subtotal - discount);
+
+      const taxRate = parseFloat(document.getElementById('tax-rate-select').value) || 0;
+      const tax = Math.round(discountedSubtotal * taxRate);
+      const total = discountedSubtotal + tax;
+
+      document.getElementById('subtotal-val').textContent = `${currency} ${subtotal.toLocaleString('zh-TW')}`;
+      document.getElementById('tax-val').textContent = `${currency} ${tax.toLocaleString('zh-TW')}`;
+      document.getElementById('total-val').textContent = `${currency} ${total.toLocaleString('zh-TW')}`;
+    }
+
+    // 處理圖片上傳與預覽
+    function handleImageUpload(event, previewId, placeholderId) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById(previewId);
+          const placeholder = document.getElementById(placeholderId);
+          img.src = e.target.result;
+          img.classList.remove('hidden');
+          if (placeholder) placeholder.classList.add('hidden');
+          saveData();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // 載入範例資料
+    function loadSampleData() {
+      document.getElementById('seller-name').value = '未來創研數位有限公司';
+      document.getElementById('seller-tax-id').value = '統編：88888888';
+      document.getElementById('seller-contact').value = '聯絡人：王小明 (0912-345-678)';
+      document.getElementById('seller-email').value = 'service@future-design.co';
+      document.getElementById('seller-address').value = '台北市信義區信義路五段 7 號';
+
+      document.getElementById('buyer-name').value = '極致科技股份有限公司';
+      document.getElementById('buyer-tax-id').value = '統編：12345678';
+      document.getElementById('buyer-contact').value = '張專案經理';
+      document.getElementById('buyer-phone').value = '02-2345-6789';
+      document.getElementById('buyer-email').value = 'pm@tech-corp.com';
+      document.getElementById('buyer-address').value = '台中市西屯區台灣大道三段 99 號';
+
+      document.getElementById('bank-info').value = '銀行：玉山銀行 (808) 營業部\n戶名：未來創研數位有限公司\n帳號：9876-543-210123';
+      document.getElementById('terms-info').value = '1. 報價有效期為 14 天。\n2. 確定合作請於下方簽章後掃描回傳。\n3. 專案啟動需支付 30% 訂金。';
+
+      items = [
+        { description: '企業官網響應式 UI/UX 視覺設計', quantity: 1, unit: '項', price: 45000 },
+        { description: '前端網頁開發與互動動畫整合', quantity: 1, unit: '項', price: 55000 },
+        { description: '後端 API 串接與資料庫系統架設', quantity: 1, unit: '項', price: 40000 },
+        { description: '雲端伺服器部署與安全性設定', quantity: 1, unit: '次', price: 12000 }
+      ];
+
+      renderItems();
+      saveData();
+    }
+
+    // 清空資料
+    function clearForm() {
+      if (confirm('確定要清空所有填寫內容嗎？')) {
+        const ids = ['seller-name', 'seller-tax-id', 'seller-contact', 'seller-email', 'seller-address',
+                     'buyer-name', 'buyer-tax-id', 'buyer-contact', 'buyer-phone', 'buyer-email', 'buyer-address',
+                     'bank-info', 'terms-info'];
+        ids.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
+        
+        document.getElementById('discount-input').value = 0;
+        
+        // 清除圖片
+        const logoImg = document.getElementById('logo-preview');
+        logoImg.src = '';
+        logoImg.classList.add('hidden');
+        document.getElementById('logo-placeholder').classList.remove('hidden');
+
+        const stampImg = document.getElementById('stamp-preview');
+        stampImg.src = '';
+        stampImg.classList.add('hidden');
+        document.getElementById('stamp-placeholder').classList.remove('hidden');
+
+        items = [];
+        renderItems();
+        localStorage.removeItem('quotation_generator_data');
+      }
+    }
+
+    // 資料儲存至 LocalStorage
+    function saveData() {
+      const data = {
+        seller: {
+          name: document.getElementById('seller-name').value,
+          taxId: document.getElementById('seller-tax-id').value,
+          contact: document.getElementById('seller-contact').value,
+          email: document.getElementById('seller-email').value,
+          address: document.getElementById('seller-address').value,
+          logo: document.getElementById('logo-preview').src
+        },
+        buyer: {
+          name: document.getElementById('buyer-name').value,
+          taxId: document.getElementById('buyer-tax-id').value,
+          contact: document.getElementById('buyer-contact').value,
+          phone: document.getElementById('buyer-phone').value,
+          email: document.getElementById('buyer-email').value,
+          address: document.getElementById('buyer-address').value
+        },
+        quote: {
+          number: document.getElementById('quote-number').value,
+          date: document.getElementById('quote-date').value,
+          expiry: document.getElementById('quote-expiry').value,
+          paymentTerms: document.getElementById('quote-payment-terms').value,
+          currency: document.getElementById('currency-select').value,
+          taxRate: document.getElementById('tax-rate-select').value,
+          discount: document.getElementById('discount-input').value
+        },
+        items: items,
+        bankInfo: document.getElementById('bank-info').value,
+        termsInfo: document.getElementById('terms-info').value,
+        stamp: document.getElementById('stamp-preview').src
+      };
+
+      localStorage.setItem('quotation_generator_data', JSON.stringify(data));
+    }
+
+    // 從 LocalStorage 載入資料
+    function loadSavedData() {
+      const json = localStorage.getItem('quotation_generator_data');
+      if (!json) return false;
+
+      try {
+        const data = JSON.parse(json);
+
+        if (data.seller) {
+          document.getElementById('seller-name').value = data.seller.name || '';
+          document.getElementById('seller-tax-id').value = data.seller.taxId || '';
+          document.getElementById('seller-contact').value = data.seller.contact || '';
+          document.getElementById('seller-email').value = data.seller.email || '';
+          document.getElementById('seller-address').value = data.seller.address || '';
+          if (data.seller.logo && data.seller.logo.length > 50) {
+            const img = document.getElementById('logo-preview');
+            img.src = data.seller.logo;
+            img.classList.remove('hidden');
+            document.getElementById('logo-placeholder').classList.add('hidden');
+          }
+        }
+
+        if (data.buyer) {
+          document.getElementById('buyer-name').value = data.buyer.name || '';
+          document.getElementById('buyer-tax-id').value = data.buyer.taxId || '';
+          document.getElementById('buyer-contact').value = data.buyer.contact || '';
+          document.getElementById('buyer-phone').value = data.buyer.phone || '';
+          document.getElementById('buyer-email').value = data.buyer.email || '';
+          document.getElementById('buyer-address').value = data.buyer.address || '';
+        }
+
+        if (data.quote) {
+          if (data.quote.number) document.getElementById('quote-number').value = data.quote.number;
+          if (data.quote.date) document.getElementById('quote-date').value = data.quote.date;
+          if (data.quote.expiry) document.getElementById('quote-expiry').value = data.quote.expiry;
+          if (data.quote.paymentTerms) document.getElementById('quote-payment-terms').value = data.quote.paymentTerms;
+          if (data.quote.currency) document.getElementById('currency-select').value = data.quote.currency;
+          if (data.quote.taxRate) document.getElementById('tax-rate-select').value = data.quote.taxRate;
+          if (data.quote.discount) document.getElementById('discount-input').value = data.quote.discount;
+        }
+
+        if (data.bankInfo) document.getElementById('bank-info').value = data.bankInfo;
+        if (data.termsInfo) document.getElementById('terms-info').value = data.termsInfo;
+
+        if (data.stamp && data.stamp.length > 50) {
+          const img = document.getElementById('stamp-preview');
+          img.src = data.stamp;
+          img.classList.remove('hidden');
+          document.getElementById('stamp-placeholder').classList.add('hidden');
+        }
+
+        if (Array.isArray(data.items)) {
+          items = data.items;
+          renderItems();
+        }
+
+        return true;
+      } catch (e) {
+        console.error('Failed to load data:', e);
+        return false;
+      }
+    }
+
+    // 字串安全轉義
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
