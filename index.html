@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>寬聯資訊股份有限公司 - 報價單系統</title>
+    <title>寬聯資訊股份有限公司 - 人力服務報價單系統</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Font Icons -->
@@ -69,8 +69,8 @@
     <div class="max-w-4xl mx-auto mb-6 bg-white p-4 rounded-xl shadow-md border border-gray-200 no-print">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center space-x-2">
-                <i class="fa-solid fa-file-invoice text-2xl text-cyan-600"></i>
-                <h1 class="text-xl font-bold text-gray-800">線上報價單產生器</h1>
+                <i class="fa-solid fa-users-gear text-2xl text-cyan-600"></i>
+                <h1 class="text-xl font-bold text-gray-800">專案人力服務報價單系統</h1>
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <button onclick="loadSampleData()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition duration-200 flex items-center gap-2">
@@ -158,14 +158,8 @@
             </div>
         </div>
 
-        <!-- 專案名稱 / 案名 區塊 -->
-        <div class="bg-cyan-50/50 p-4 rounded-xl border border-cyan-100 mb-6 flex flex-col md:flex-row items-start md:items-center gap-2">
-            <span class="text-xs font-bold text-cyan-900 uppercase tracking-wider whitespace-nowrap shrink-0">專案名稱 (PROJECT)：</span>
-            <input type="text" id="projectName" class="font-bold text-gray-800 text-base w-full bg-transparent focus:outline-none focus:bg-white rounded px-2 py-1 border border-transparent focus:border-cyan-300 transition" placeholder="請輸入專案案名" value="分行銷售例外報表新增優化及功能開發 (2027年)">
-        </div>
-
         <!-- 買方 / 客戶資料區 -->
-        <div class="bg-slate-50 p-6 rounded-xl border border-slate-200/60 mb-8">
+        <div class="bg-slate-50 p-6 rounded-xl border border-slate-200/60 mb-6">
             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">買方 / 客戶資料 (CLIENT INFORMATION)</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
                 <!-- Row 1: 公司名稱 -->
@@ -196,31 +190,51 @@
             </div>
         </div>
 
-        <!-- 報價項目表格 (品名欄位擴大並改為多行多文字) -->
-        <div class="overflow-x-auto mb-8">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="border-b-2 border-gray-800 text-gray-700 text-xs uppercase tracking-wider">
-                        <th class="py-3 px-2 w-8 text-center">#</th>
-                        <th class="py-3 px-2">品名 / 服務描述</th>
-                        <th class="py-3 px-2 w-16 text-center">數量</th>
-                        <th class="py-3 px-2 w-16 text-center">單位</th>
-                        <th class="py-3 px-2 w-24 text-right">單價</th>
-                        <th class="py-3 px-2 w-28 text-right">小計</th>
-                        <th class="py-3 px-2 w-8 text-center no-print"></th>
-                    </tr>
-                </thead>
-                <tbody id="itemsTableBody" class="divide-y divide-gray-100 text-sm">
-                    <!-- 動態由 JavaScript 產生 -->
-                </tbody>
-            </table>
-
-            <!-- 新增項目按鈕 -->
-            <div class="mt-4 no-print">
-                <button onclick="addItem()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition duration-200 flex items-center gap-2">
-                    <i class="fa-solid fa-plus text-xs"></i> 新增報價項目
-                </button>
+        <!-- 人力服務報價表格 (參考官方表格結構) -->
+        <div class="border border-gray-300 rounded-lg overflow-hidden mb-8 shadow-sm">
+            
+            <!-- 表頭專案資訊 (專案名稱 & 服務期間) -->
+            <div class="bg-gray-100 border-b border-gray-300 text-sm">
+                <div class="flex flex-col sm:flex-row border-b border-gray-200">
+                    <div class="w-full sm:w-28 bg-gray-200 text-gray-700 font-bold p-2.5 text-center border-r border-gray-300 shrink-0 whitespace-nowrap">專案名稱</div>
+                    <div class="w-full p-2 flex items-center bg-white">
+                        <input type="text" id="projectName" class="w-full font-bold text-gray-800 bg-transparent focus:outline-none focus:bg-cyan-50/50 rounded px-2 py-1" value="分行銷售例外報表新增優化及功能開發(2027年度)">
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row">
+                    <div class="w-full sm:w-28 bg-gray-200 text-gray-700 font-bold p-2.5 text-center border-r border-gray-300 shrink-0 whitespace-nowrap">服務期間</div>
+                    <div class="w-full p-2 flex items-center bg-white">
+                        <input type="text" id="servicePeriod" class="w-full text-gray-700 bg-transparent focus:outline-none focus:bg-cyan-50/50 rounded px-2 py-1" value="本專案實際執行期間，以完成簽核及採購程序之日起算">
+                    </div>
+                </div>
             </div>
+
+            <!-- 明細表格 (項次、項目、人數、月份、單價、金額) -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-800 text-xs font-bold border-b border-gray-300">
+                            <th class="py-2.5 px-2 w-12 text-center border-r border-gray-300">項次</th>
+                            <th class="py-2.5 px-3 border-r border-gray-300">項目 (角色與技能需求說明)</th>
+                            <th class="py-2.5 px-2 w-16 text-center border-r border-gray-300">人數</th>
+                            <th class="py-2.5 px-2 w-16 text-center border-r border-gray-300">月份</th>
+                            <th class="py-2.5 px-3 w-28 text-right border-r border-gray-300">單價 (人/月)</th>
+                            <th class="py-2.5 px-3 w-32 text-right">金額</th>
+                            <th class="py-2.5 px-2 w-8 text-center no-print"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody" class="divide-y divide-gray-200 text-sm">
+                        <!-- 動態由 JavaScript 產生 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 新增人力項目按鈕 -->
+        <div class="mb-8 no-print">
+            <button onclick="addItem()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition duration-200 flex items-center gap-2">
+                <i class="fa-solid fa-user-plus text-xs"></i> 新增人力報價項目
+            </button>
         </div>
 
         <!-- 結算總計與蓋章簽署區 -->
@@ -316,12 +330,19 @@
         // 初始化日期為今日
         document.getElementById('quoteDate').valueAsDate = new Date();
 
-        // 預設項目資料
+        // 人力報價項目資料結構 (包含人數與月份)
         let items = [
-            { description: '分行銷售例外報表新增優化及功能開發 (2027年)', quantity: 1, unit: '項', price: 150000 },
-            { description: '前端網頁開發與互動動畫整合', quantity: 1, unit: '項', price: 55000 },
-            { description: '後端 API 串接與資料庫系統架設', quantity: 1, unit: '項', price: 40000 },
-            { description: '雲端伺服器部署與安全性設定', quantity: 1, unit: '次', price: 12000 }
+            { 
+                description: `資深程式設計師(PG)
+●具.NET開發經驗 5年(含)以上
+●具有複雜Store Procedure及報表開發經驗
+●熟悉T-SQL語法、StoreProcedure、View、SQL函數等
+●需熟悉Oracle及SQL Server 資料庫
+●熟悉SSIS及ASP.NET、Visual Studio 2019、Visual Studio 2022開發工具`, 
+                people: 2, 
+                months: 12, 
+                price: 140000 
+            }
         ];
 
         // 高度自動適應 textarea
@@ -336,27 +357,27 @@
             tbody.innerHTML = '';
 
             items.forEach((item, index) => {
-                const subtotal = item.quantity * item.price;
+                const amount = item.people * item.months * item.price;
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 transition align-top';
                 tr.innerHTML = `
-                    <td class="py-3 px-2 text-center text-gray-400 text-xs pt-4">${index + 1}</td>
-                    <td class="py-3 px-2">
-                        <textarea oninput="autoResizeTextarea(this); updateItem(${index}, 'description', this.value)" class="w-full bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300 resize-none overflow-hidden text-sm leading-relaxed" rows="1" placeholder="品名細項/服務描述">${escapeHtml(item.description)}</textarea>
+                    <td class="py-3 px-2 text-center text-gray-500 font-medium text-xs border-r border-gray-200 pt-3.5">${index + 1}</td>
+                    <td class="py-2 px-3 border-r border-gray-200">
+                        <textarea oninput="autoResizeTextarea(this); updateItem(${index}, 'description', this.value)" class="w-full bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300 resize-none overflow-hidden text-sm leading-relaxed" rows="3" placeholder="請輸入角色職稱與需求說明">${escapeHtml(item.description)}</textarea>
                     </td>
-                    <td class="py-3 px-2 text-center">
-                        <input type="number" min="0" value="${item.quantity}" onchange="updateItem(${index}, 'quantity', parseFloat(this.value) || 0)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300 no-spinner">
+                    <td class="py-2 px-2 text-center border-r border-gray-200 pt-3">
+                        <input type="number" min="1" value="${item.people}" onchange="updateItem(${index}, 'people', parseFloat(this.value) || 0)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300 no-spinner font-medium">
                     </td>
-                    <td class="py-3 px-2 text-center">
-                        <input type="text" value="${escapeHtml(item.unit)}" onchange="updateItem(${index}, 'unit', this.value)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300" placeholder="單位">
+                    <td class="py-2 px-2 text-center border-r border-gray-200 pt-3">
+                        <input type="number" min="1" value="${item.months}" onchange="updateItem(${index}, 'months', parseFloat(this.value) || 0)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300 no-spinner font-medium">
                     </td>
-                    <td class="py-3 px-2 text-right">
-                        <input type="number" min="0" value="${item.price}" onchange="updateItem(${index}, 'price', parseFloat(this.value) || 0)" class="w-full text-right bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300 no-spinner">
+                    <td class="py-2 px-3 text-right border-r border-gray-200 pt-3">
+                        <input type="number" min="0" value="${item.price}" onchange="updateItem(${index}, 'price', parseFloat(this.value) || 0)" class="w-full text-right bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300 no-spinner font-medium">
                     </td>
-                    <td class="py-3 px-2 text-right font-medium text-gray-700 pt-4 whitespace-nowrap">
-                        NT$ ${subtotal.toLocaleString()}
+                    <td class="py-3 px-3 text-right font-bold text-gray-800 pt-3.5 whitespace-nowrap">
+                        ${amount.toLocaleString()}
                     </td>
-                    <td class="py-3 px-2 text-center no-print pt-4">
+                    <td class="py-3 px-2 text-center no-print pt-3.5">
                         <button onclick="removeItem(${index})" class="text-gray-300 hover:text-red-500 transition px-1">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
@@ -372,9 +393,9 @@
             calculateTotals();
         }
 
-        // 新增品項
+        // 新增人力報價項目
         function addItem() {
-            items.push({ description: '', quantity: 1, unit: '項', price: 0 });
+            items.push({ description: '', people: 1, months: 1, price: 0 });
             renderItems();
         }
 
@@ -390,9 +411,9 @@
             calculateTotals();
         }
 
-        // 計算總金額
+        // 計算總金額 (金額 = 人數 × 月份 × 單價)
         function calculateTotals() {
-            const subtotal = items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            const subtotal = items.reduce((sum, item) => sum + (item.people * item.months * item.price), 0);
             const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
             const tax = Math.round(subtotal * taxRate);
             const grandTotal = subtotal + tax;
@@ -401,12 +422,13 @@
             document.getElementById('taxDisplay').textContent = `NT$ ${tax.toLocaleString()}`;
             document.getElementById('grandTotalDisplay').textContent = `NT$ ${grandTotal.toLocaleString()}`;
 
-            // 即時更新小計欄位
+            // 即時更新金額欄位
             const tbody = document.getElementById('itemsTableBody');
             items.forEach((item, index) => {
-                const subtotalTd = tbody.rows[index]?.cells[5];
-                if (subtotalTd) {
-                    subtotalTd.textContent = `NT$ ${(item.quantity * item.price).toLocaleString()}`;
+                const amountTd = tbody.rows[index]?.cells[5];
+                if (amountTd) {
+                    const amount = item.people * item.months * item.price;
+                    amountTd.textContent = amount.toLocaleString();
                 }
             });
         }
@@ -442,7 +464,9 @@
             document.getElementById('sellerEmail').value = 'lynn.zhan@kli.com.tw';
             document.getElementById('sellerAddress').value = '114 台北市內湖區新湖二路211號6樓';
 
-            document.getElementById('projectName').value = '分行銷售例外報表新增優化及功能開發 (2027年)';
+            document.getElementById('projectName').value = '分行銷售例外報表新增優化及功能開發(2027年度)';
+            document.getElementById('servicePeriod').value = '本專案實際執行期間，以完成簽核及採購程序之日起算';
+            
             document.getElementById('clientName').value = '台新國際商業銀行股份有限公司';
             document.getElementById('clientTaxId').value = '86519539';
             document.getElementById('clientContact').value = '陳永峰 經理';
@@ -456,10 +480,17 @@
 4. 本報價單未經本公司書面同意，不得對外公開本報價單之存在或內容`;
 
             items = [
-                { description: '分行銷售例外報表新增優化及功能開發 (2027年)', quantity: 1, unit: '項', price: 150000 },
-                { description: '前端網頁開發與互動動畫整合', quantity: 1, unit: '項', price: 55000 },
-                { description: '後端 API 串接與資料庫系統架設', quantity: 1, unit: '項', price: 40000 },
-                { description: '雲端伺服器部署與安全性設定', quantity: 1, unit: '次', price: 12000 }
+                { 
+                    description: `資深程式設計師(PG)
+●具.NET開發經驗 5年(含)以上
+●具有複雜Store Procedure及報表開發經驗
+●熟悉T-SQL語法、StoreProcedure、View、SQL函數等
+●需熟悉Oracle及SQL Server 資料庫
+●熟悉SSIS及ASP.NET、Visual Studio 2019、Visual Studio 2022開發工具`, 
+                    people: 2, 
+                    months: 12, 
+                    price: 140000 
+                }
             ];
             renderItems();
         }
@@ -467,6 +498,7 @@
         // 清空欄位
         function clearData() {
             document.getElementById('projectName').value = '';
+            document.getElementById('servicePeriod').value = '';
             document.getElementById('clientName').value = '';
             document.getElementById('clientTaxId').value = '';
             document.getElementById('clientContact').value = '';
