@@ -110,7 +110,7 @@
           <i class="fa-solid fa-file-invoice text-xl text-white"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-tight">線上報價單產生器</h1>
+          <h1 class="font-bold text-lg leading-tight">寬聯資訊 - 線上報價單產生器</h1>
           <p class="text-xs text-slate-400">極簡、專業、即時預覽與 PDF 導出</p>
         </div>
       </div>
@@ -153,37 +153,37 @@
 
             <!-- 賣方基本資料 -->
             <div class="space-y-1 text-sm">
-              <input type="text" id="seller-name" placeholder="您的公司名稱 / 賣方姓名" class="w-full font-bold text-slate-900 border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5 text-base" oninput="saveData()">
+              <input type="text" id="seller-name" value="寬聯資訊股份有限公司" placeholder="您的公司名稱 / 賣方姓名" class="w-full font-bold text-slate-900 border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5 text-base" oninput="saveData()">
               <div class="grid grid-cols-1 gap-1 text-slate-600 text-xs">
-                <input type="text" id="seller-tax-id" placeholder="統一編號（選填）" class="border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
-                <input type="text" id="seller-contact" placeholder="聯絡人 / 電話" class="border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
-                <input type="text" id="seller-email" placeholder="Email" class="border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
-                <input type="text" id="seller-address" placeholder="公司地址" class="border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+                <div class="flex items-center gap-1">
+                  <span class="text-slate-400">統編：</span>
+                  <input type="text" id="seller-tax-id" value="52784735" placeholder="統一編號" class="w-full border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="text-slate-400">聯絡人：</span>
+                  <input type="text" id="seller-contact" value="詹嘉鈴 0911840257" placeholder="聯絡人 / 電話" class="w-full border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="text-slate-400">Email：</span>
+                  <input type="text" id="seller-email" value="lynn.zhan@kli.com.tw" placeholder="Email" class="w-full border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="text-slate-400">地址：</span>
+                  <input type="text" id="seller-address" value="114 台北市內湖區新湖二路211號6樓" placeholder="公司地址" class="w-full border-b border-transparent hover:border-slate-300 focus:border-brand-500 focus:outline-none py-0.5" oninput="saveData()">
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- 報價單單號與日期資訊 -->
+          <!-- 報價單日期資訊 -->
           <div class="w-full md:w-1/2 flex flex-col items-start md:items-end text-right space-y-3">
             <h2 class="text-3xl font-extrabold text-brand-700 tracking-wider uppercase">報 價 單</h2>
             <p class="text-xs text-slate-400 font-mono tracking-widest uppercase">QUOTATION</p>
             
             <div class="w-full max-w-xs space-y-1.5 text-xs text-slate-600 pt-2">
               <div class="flex justify-between items-center">
-                <span class="font-medium text-slate-500">報價單號：</span>
-                <input type="text" id="quote-number" class="font-mono font-semibold text-slate-800 text-right border-b border-slate-200 focus:border-brand-500 focus:outline-none px-1 py-0.5 w-36" oninput="saveData()">
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="font-medium text-slate-500">開立日期：</span>
+                <span class="font-medium text-slate-500">報價日期：</span>
                 <input type="date" id="quote-date" class="text-slate-800 text-right border-b border-slate-200 focus:border-brand-500 focus:outline-none px-1 py-0.5 w-36" oninput="saveData()">
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="font-medium text-slate-500">有效期限：</span>
-                <input type="date" id="quote-expiry" class="text-slate-800 text-right border-b border-slate-200 focus:border-brand-500 focus:outline-none px-1 py-0.5 w-36" oninput="saveData()">
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="font-medium text-slate-500">付款條件：</span>
-                <input type="text" id="quote-payment-terms" placeholder="例如：簽約付 30%" class="text-slate-800 text-right border-b border-slate-200 focus:border-brand-500 focus:outline-none px-1 py-0.5 w-36" oninput="saveData()">
               </div>
             </div>
           </div>
@@ -249,7 +249,7 @@
                 <option value="HK$">HKD (HK$)</option>
               </select>
             </div>
-            <p class="text-xs text-slate-400 italic">備註：本報價單金額均以選擇之幣別計價，有效期限內有效。</p>
+            <p class="text-xs text-slate-400 italic">備註：本報價單金額均以選擇之幣別計價。</p>
           </div>
 
           <!-- 金額小計與總計 -->
@@ -298,15 +298,15 @@
             <h4 class="font-bold text-slate-700 flex items-center gap-1">
               <i class="fa-solid fa-building-columns text-slate-500"></i> 付款 / 匯款帳號資訊
             </h4>
-            <textarea id="bank-info" rows="3" placeholder="銀行名稱：台灣銀行&#10;戶名：某某股份有限公司&#10;帳號：123-456-7890" class="w-full bg-transparent border border-transparent hover:border-slate-300 focus:border-brand-500 focus:bg-white focus:outline-none p-1 rounded resize-y" oninput="saveData()"></textarea>
+            <textarea id="bank-info" rows="4" placeholder="銀行名稱：國泰世華銀行 (013)&#10;戶名：寬聯資訊股份有限公司&#10;帳號：123-456-7890" class="w-full bg-transparent border border-transparent hover:border-slate-300 focus:border-brand-500 focus:bg-white focus:outline-none p-1 rounded resize-y" oninput="saveData()"></textarea>
           </div>
 
-          <!-- 條款與細則 -->
+          <!-- 備註條款 -->
           <div class="space-y-1.5 bg-slate-50 p-3 rounded border border-slate-200/80">
             <h4 class="font-bold text-slate-700 flex items-center gap-1">
-              <i class="fa-solid fa-clipboard-list text-slate-500"></i> 條款與備註 (Terms & Conditions)
+              <i class="fa-solid fa-clipboard-list text-slate-500"></i> 備註
             </h4>
-            <textarea id="terms-info" rows="3" placeholder="1. 本報價單回簽後視同正式訂單。&#10;2. 款項請於發票開立後 30 天內付清。&#10;3. 若專案需求變更，費用將另行報價。" class="w-full bg-transparent border border-transparent hover:border-slate-300 focus:border-brand-500 focus:bg-white focus:outline-none p-1 rounded resize-y" oninput="saveData()"></textarea>
+            <textarea id="terms-info" rows="4" placeholder="1. 本報價單經蓋章即視為正式訂單且具法律效用&#10;2. 以上報價有效期限：&#10;3. 有關規定未盡詳部分，若有合約則以合約書為準&#10;4. 本報價單未經本公司書面同意，不得對外公開本報價單之存在或內容" class="w-full bg-transparent border border-transparent hover:border-slate-300 focus:border-brand-500 focus:bg-white focus:outline-none p-1 rounded resize-y" oninput="saveData()"></textarea>
           </div>
 
         </div>
@@ -340,7 +340,7 @@
   </main>
 
   <footer class="no-print bg-white border-t border-slate-200 mt-auto py-4 text-center text-xs text-slate-500">
-    <p>© 線上報價單工具 - 資料自動暫存於本地瀏覽器 (LocalStorage)</p>
+    <p>© 寬聯資訊股份有限公司 - 線上報價單工具 (資料自動暫存於本地瀏覽器)</p>
   </footer>
 
   <!-- JavaScript 邏輯控制 -->
@@ -350,14 +350,9 @@
 
     // 初始化頁面
     window.onload = function() {
-      // 設定預設日期 (今天 & 14天後)
+      // 設定預設日期 (今天)
       const today = new Date();
-      const expiry = new Date();
-      expiry.setDate(today.getDate() + 14);
-
       document.getElementById('quote-date').value = formatDate(today);
-      document.getElementById('quote-expiry').value = formatDate(expiry);
-      document.getElementById('quote-number').value = 'QT-' + today.getFullYear() + String(today.getMonth()+1).padStart(2, '0') + String(today.getDate()).padStart(2, '0') + '-01';
 
       // 載入 localStorage 資料，若無則載入預設資料
       if (!loadSavedData()) {
@@ -493,27 +488,25 @@
 
     // 載入範例資料
     function loadSampleData() {
-      document.getElementById('seller-name').value = '未來創研數位有限公司';
-      document.getElementById('seller-tax-id').value = '統編：88888888';
-      document.getElementById('seller-contact').value = '聯絡人：王小明 (0912-345-678)';
-      document.getElementById('seller-email').value = 'service@future-design.co';
-      document.getElementById('seller-address').value = '台北市信義區信義路五段 7 號';
+      document.getElementById('seller-name').value = '寬聯資訊股份有限公司';
+      document.getElementById('seller-tax-id').value = '52784735';
+      document.getElementById('seller-contact').value = '詹嘉鈴 0911840257';
+      document.getElementById('seller-email').value = 'lynn.zhan@kli.com.tw';
+      document.getElementById('seller-address').value = '114 台北市內湖區新湖二路211號6樓';
 
       document.getElementById('buyer-name').value = '極致科技股份有限公司';
-      document.getElementById('buyer-tax-id').value = '統編：12345678';
+      document.getElementById('buyer-tax-id').value = '12345678';
       document.getElementById('buyer-contact').value = '張專案經理';
       document.getElementById('buyer-phone').value = '02-2345-6789';
       document.getElementById('buyer-email').value = 'pm@tech-corp.com';
       document.getElementById('buyer-address').value = '台中市西屯區台灣大道三段 99 號';
 
-      document.getElementById('bank-info').value = '銀行：玉山銀行 (808) 營業部\n戶名：未來創研數位有限公司\n帳號：9876-543-210123';
-      document.getElementById('terms-info').value = '1. 報價有效期為 14 天。\n2. 確定合作請於下方簽章後掃描回傳。\n3. 專案啟動需支付 30% 訂金。';
+      document.getElementById('bank-info').value = '銀行名稱：國泰世華銀行 (013)\n戶名：寬聯資訊股份有限公司\n帳號：123-456-7890';
+      document.getElementById('terms-info').value = '1. 本報價單經蓋章即視為正式訂單且具法律效用\n2. 以上報價有效期限：\n3. 有關規定未盡詳部分，若有合約則以合約書為準\n4. 本報價單未經本公司書面同意，不得對外公開本報價單之存在或內容';
 
       items = [
-        { description: '企業官網響應式 UI/UX 視覺設計', quantity: 1, unit: '項', price: 45000 },
-        { description: '前端網頁開發與互動動畫整合', quantity: 1, unit: '項', price: 55000 },
-        { description: '後端 API 串接與資料庫系統架設', quantity: 1, unit: '項', price: 40000 },
-        { description: '雲端伺服器部署與安全性設定', quantity: 1, unit: '次', price: 12000 }
+        { description: '企業級資訊系統開發服務', quantity: 1, unit: '項', price: 120000 },
+        { description: '伺服器維護與資訊安全維護合約 (年度)', quantity: 1, unit: '年', price: 60000 }
       ];
 
       renderItems();
@@ -523,9 +516,7 @@
     // 清空資料
     function clearForm() {
       if (confirm('確定要清空所有填寫內容嗎？')) {
-        const ids = ['seller-name', 'seller-tax-id', 'seller-contact', 'seller-email', 'seller-address',
-                     'buyer-name', 'buyer-tax-id', 'buyer-contact', 'buyer-phone', 'buyer-email', 'buyer-address',
-                     'bank-info', 'terms-info'];
+        const ids = ['buyer-name', 'buyer-tax-id', 'buyer-contact', 'buyer-phone', 'buyer-email', 'buyer-address', 'bank-info'];
         ids.forEach(id => {
           const el = document.getElementById(id);
           if (el) el.value = '';
@@ -533,6 +524,9 @@
         
         document.getElementById('discount-input').value = 0;
         
+        // 重置為預設備註條款
+        document.getElementById('terms-info').value = '1. 本報價單經蓋章即視為正式訂單且具法律效用\n2. 以上報價有效期限：\n3. 有關規定未盡詳部分，若有合約則以合約書為準\n4. 本報價單未經本公司書面同意，不得對外公開本報價單之存在或內容';
+
         // 清除圖片
         const logoImg = document.getElementById('logo-preview');
         logoImg.src = '';
@@ -570,10 +564,7 @@
           address: document.getElementById('buyer-address').value
         },
         quote: {
-          number: document.getElementById('quote-number').value,
           date: document.getElementById('quote-date').value,
-          expiry: document.getElementById('quote-expiry').value,
-          paymentTerms: document.getElementById('quote-payment-terms').value,
           currency: document.getElementById('currency-select').value,
           taxRate: document.getElementById('tax-rate-select').value,
           discount: document.getElementById('discount-input').value
@@ -596,11 +587,11 @@
         const data = JSON.parse(json);
 
         if (data.seller) {
-          document.getElementById('seller-name').value = data.seller.name || '';
-          document.getElementById('seller-tax-id').value = data.seller.taxId || '';
-          document.getElementById('seller-contact').value = data.seller.contact || '';
-          document.getElementById('seller-email').value = data.seller.email || '';
-          document.getElementById('seller-address').value = data.seller.address || '';
+          if (data.seller.name) document.getElementById('seller-name').value = data.seller.name;
+          if (data.seller.taxId) document.getElementById('seller-tax-id').value = data.seller.taxId;
+          if (data.seller.contact) document.getElementById('seller-contact').value = data.seller.contact;
+          if (data.seller.email) document.getElementById('seller-email').value = data.seller.email;
+          if (data.seller.address) document.getElementById('seller-address').value = data.seller.address;
           if (data.seller.logo && data.seller.logo.length > 50) {
             const img = document.getElementById('logo-preview');
             img.src = data.seller.logo;
@@ -619,17 +610,14 @@
         }
 
         if (data.quote) {
-          if (data.quote.number) document.getElementById('quote-number').value = data.quote.number;
           if (data.quote.date) document.getElementById('quote-date').value = data.quote.date;
-          if (data.quote.expiry) document.getElementById('quote-expiry').value = data.quote.expiry;
-          if (data.quote.paymentTerms) document.getElementById('quote-payment-terms').value = data.quote.paymentTerms;
           if (data.quote.currency) document.getElementById('currency-select').value = data.quote.currency;
           if (data.quote.taxRate) document.getElementById('tax-rate-select').value = data.quote.taxRate;
           if (data.quote.discount) document.getElementById('discount-input').value = data.quote.discount;
         }
 
-        if (data.bankInfo) document.getElementById('bank-info').value = data.bankInfo;
-        if (data.termsInfo) document.getElementById('terms-info').value = data.termsInfo;
+        if (data.bankInfo !== undefined) document.getElementById('bank-info').value = data.bankInfo;
+        if (data.termsInfo !== undefined) document.getElementById('terms-info').value = data.termsInfo;
 
         if (data.stamp && data.stamp.length > 50) {
           const img = document.getElementById('stamp-preview');
