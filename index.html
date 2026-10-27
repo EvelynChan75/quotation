@@ -219,4 +219,242 @@
             </div>
         </div>
 
-        <!-- 結算總計與
+        <!-- 結算總計與蓋章簽署區 -->
+        <div class="flex flex-col md:flex-row justify-between items-start gap-8 border-t border-gray-200 pt-6">
+            
+            <!-- 左側：備註條款 -->
+            <div class="w-full md:w-1/2 space-y-3">
+                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider">備註</h4>
+                <textarea id="notes" rows="5" class="w-full text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:bg-white transition" placeholder="填寫備註或注意事項...">1. 本報價單經蓋章即視為正式訂單且具法律效用
+2. 以上報價有效期限：
+3. 有關規定未盡詳部分，若有合約則以合約書為準 
+4. 本報價單未經本公司書面同意，不得對外公開本報價單之存在或內容</textarea>
+            </div>
+
+            <!-- 右側：金額計算小計與印章 -->
+            <div class="w-full md:w-5/12 space-y-4">
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between text-gray-600">
+                        <span>小計 (Subtotal)</span>
+                        <span id="subtotalDisplay" class="font-medium">NT$ 0</span>
+                    </div>
+
+                    <!-- 營業稅設定 (預設 5%) -->
+                    <div class="flex justify-between items-center text-gray-600">
+                        <div class="flex items-center gap-1">
+                            <span>營業稅</span>
+                            <select id="taxRate" onchange="calculateTotals()" class="text-xs bg-gray-100 border border-gray-200 rounded px-1 py-0.5 no-print">
+                                <option value="0.05" selected>5%</option>
+                                <option value="0">免稅 (0%)</option>
+                            </select>
+                        </div>
+                        <span id="taxDisplay" class="font-medium">NT$ 0</span>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-2 mt-2 flex justify-between items-center">
+                        <span class="text-base font-bold text-gray-900">總計 (Total)</span>
+                        <span id="grandTotalDisplay" class="text-xl font-extrabold text-cyan-900">NT$ 0</span>
+                    </div>
+                </div>
+
+                <!-- 公司蓋章 / 簽署區 -->
+                <div class="pt-4 border-t border-dashed border-gray-200">
+                    <div class="flex justify-between items-end">
+                        <div class="text-xs text-gray-400">
+                            公司蓋章 / 負責人簽署：
+                        </div>
+                        <!-- 印章圖片上傳/預覽 -->
+                        <div class="relative group w-36 h-24 border-2 border-dashed border-transparent hover:border-cyan-500 rounded-lg flex items-center justify-center cursor-pointer overflow-hidden" onclick="document.getElementById('stampInput').click()">
+                            <div id="stampPreview" class="w-full h-full flex items-center justify-center p-1">
+                                <!-- 藍色雙圈橢圓公司報價專用章 -->
+                                <svg class="w-32 h-20" viewBox="0 0 200 130" xmlns="http://www.w3.org/2000/svg">
+                                    <ellipse cx="100" cy="65" rx="95" ry="60" fill="none" stroke="#255fa3" stroke-width="3" opacity="0.85"/>
+                                    <ellipse cx="100" cy="65" rx="89" ry="54" fill="none" stroke="#255fa3" stroke-width="1.5" opacity="0.85"/>
+                                    <ellipse cx="100" cy="65" rx="62" ry="34" fill="none" stroke="#255fa3" stroke-width="1.5" opacity="0.85"/>
+                                    
+                                    <path id="topArc" d="M 20,65 A 80,48 0 0,1 180,65" fill="none" />
+                                    <text fill="#255fa3" font-size="14" font-weight="bold" opacity="0.85" letter-spacing="1">
+                                        <textPath href="#topArc" startOffset="50%" text-anchor="middle">寬聯資訊股份有限公司</textPath>
+                                    </text>
+
+                                    <text x="100" y="58" fill="#255fa3" font-size="19" font-weight="900" text-anchor="middle" opacity="0.85" letter-spacing="2">報價專用章</text>
+                                    
+                                    <text x="100" y="78" fill="#255fa3" font-size="12" font-weight="bold" text-anchor="middle" opacity="0.85" letter-spacing="0.5">TEL:02-27921516</text>
+
+                                    <path id="bottomArc" d="M 25,65 A 75,44 0 0,0 175,65" fill="none" />
+                                    <text fill="#255fa3" font-size="10" font-weight="bold" opacity="0.85">
+                                        <textPath href="#bottomArc" startOffset="50%" text-anchor="middle">台北市內湖區新湖二路211號</textPath>
+                                    </text>
+
+                                    <g fill="#255fa3" opacity="0.85">
+                                        <circle cx="24" cy="65" r="3"/>
+                                        <circle cx="176" cy="65" r="3"/>
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="absolute inset-0 bg-black/40 text-white text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition no-print rounded-lg">
+                                點擊上傳印章
+                            </div>
+                            <input type="file" id="stampInput" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'stampPreview')">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 頁尾宣告 -->
+        <div class="mt-12 text-center text-xs text-gray-400 border-t border-gray-100 pt-4">
+            感謝您的惠顧！如有任何問題，歡迎隨時與我們聯繫。
+        </div>
+    </div>
+
+    <!-- JavaScript 邏輯控制 -->
+    <script>
+        // 初始化日期為今日
+        document.getElementById('quoteDate').valueAsDate = new Date();
+
+        // 預設項目資料
+        let items = [
+            { description: '企業官網響應式 UI/UX 視覺設計', quantity: 1, unit: '項', price: 45000 },
+            { description: '前端網頁開發與互動動畫整合', quantity: 1, unit: '項', price: 55000 },
+            { description: '後端 API 串接與資料庫系統架設', quantity: 1, unit: '項', price: 40000 },
+            { description: '雲端伺服器部署與安全性設定', quantity: 1, unit: '次', price: 12000 }
+        ];
+
+        // 渲染品項表格
+        function renderItems() {
+            const tbody = document.getElementById('itemsTableBody');
+            tbody.innerHTML = '';
+
+            items.forEach((item, index) => {
+                const subtotal = item.quantity * item.price;
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 transition';
+                tr.innerHTML = `
+                    <td class="py-3 px-2 text-center text-gray-400 text-xs">${index + 1}</td>
+                    <td class="py-3 px-2">
+                        <input type="text" value="${escapeHtml(item.description)}" onchange="updateItem(${index}, 'description', this.value)" class="w-full bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300" placeholder="品名細項">
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                        <input type="number" min="1" value="${item.quantity}" onchange="updateItem(${index}, 'quantity', parseFloat(this.value) || 0)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 no-spinner">
+                    </td>
+                    <td class="py-3 px-2 text-center">
+                        <input type="text" value="${escapeHtml(item.unit)}" onchange="updateItem(${index}, 'unit', this.value)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300" placeholder="單位">
+                    </td>
+                    <td class="py-3 px-2 text-right">
+                        <input type="number" min="0" value="${item.price}" onchange="updateItem(${index}, 'price', parseFloat(this.value) || 0)" class="w-full text-right bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 no-spinner">
+                    </td>
+                    <td class="py-3 px-2 text-right font-medium text-gray-700">
+                        NT$ ${subtotal.toLocaleString()}
+                    </td>
+                    <td class="py-3 px-2 text-center no-print">
+                        <button onclick="removeItem(${index})" class="text-gray-300 hover:text-red-500 transition px-1">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            calculateTotals();
+        }
+
+        // 新增品項
+        function addItem() {
+            items.push({ description: '', quantity: 1, unit: '項', price: 0 });
+            renderItems();
+        }
+
+        // 刪除品項
+        function removeItem(index) {
+            items.splice(index, 1);
+            renderItems();
+        }
+
+        // 更新單一品項值
+        function updateItem(index, field, value) {
+            items[index][field] = value;
+            renderItems();
+        }
+
+        // 計算總金額
+        function calculateTotals() {
+            const subtotal = items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const tax = Math.round(subtotal * taxRate);
+            const grandTotal = subtotal + tax;
+
+            document.getElementById('subtotalDisplay').textContent = `NT$ ${subtotal.toLocaleString()}`;
+            document.getElementById('taxDisplay').textContent = `NT$ ${tax.toLocaleString()}`;
+            document.getElementById('grandTotalDisplay').textContent = `NT$ ${grandTotal.toLocaleString()}`;
+        }
+
+        // 圖片上傳處置 (Logo / 印章)
+        function handleImageUpload(event, previewId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewContainer = document.getElementById(previewId);
+                    previewContainer.innerHTML = `<img src="${e.target.result}" class="max-h-full max-w-full object-contain">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 特殊字元轉義保護
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // 載入預設資料
+        function loadSampleData() {
+            document.getElementById('sellerName').value = '寬聯資訊股份有限公司';
+            document.getElementById('sellerTaxId').value = '52784735';
+            document.getElementById('sellerContact').value = '詹嘉鈴 0911840257';
+            document.getElementById('sellerEmail').value = 'lynn.zhan@kli.com.tw';
+            document.getElementById('sellerAddress').value = '114 台北市內湖區新湖二路211號6樓';
+
+            document.getElementById('clientName').value = '台新國際商業銀行股份有限公司';
+            document.getElementById('clientTaxId').value = '86519539';
+            document.getElementById('clientContact').value = '陳永峰 經理';
+            document.getElementById('clientPhone').value = '02-8798-9999#8538';
+            document.getElementById('clientEmail').value = '931416@taishinbank.com.tw';
+
+            document.getElementById('quoteDate').valueAsDate = new Date();
+            document.getElementById('notes').value = `1. 本報價單經蓋章即視為正式訂單且具法律效用
+2. 以上報價有效期限：
+3. 有關規定未盡詳部分，若有合約則以合約書為準 
+4. 本報價單未經本公司書面同意，不得對外公開本報價單之存在或內容`;
+
+            items = [
+                { description: '企業官網響應式 UI/UX 視覺設計', quantity: 1, unit: '項', price: 45000 },
+                { description: '前端網頁開發與互動動畫整合', quantity: 1, unit: '項', price: 55000 },
+                { description: '後端 API 串接與資料庫系統架設', quantity: 1, unit: '項', price: 40000 },
+                { description: '雲端伺服器部署與安全性設定', quantity: 1, unit: '次', price: 12000 }
+            ];
+            renderItems();
+        }
+
+        // 清空欄位
+        function clearData() {
+            document.getElementById('clientName').value = '';
+            document.getElementById('clientTaxId').value = '';
+            document.getElementById('clientContact').value = '';
+            document.getElementById('clientPhone').value = '';
+            document.getElementById('clientEmail').value = '';
+            items = [];
+            renderItems();
+        }
+
+        // 頁面初始化
+        renderItems();
+    </script>
+</body>
+</html>
