@@ -86,10 +86,10 @@
         </div>
     </div>
 
-    <!-- 報價單主體容器 (緊湊排版版面) -->
+    <!-- 報價單主體容器 (A4 比例與精簡間距) -->
     <div class="max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-xl shadow-xl border border-gray-200 print-container relative">
         
-        <!-- 頂部區塊：Logo & 賣方資訊 / 報價單標題 (緊湊間距) -->
+        <!-- 頂部區塊：Logo & 賣方資訊 / 報價單標題 -->
         <div class="flex flex-col md:flex-row justify-between items-start border-b border-gray-200 pb-4 mb-4 gap-4">
             
             <!-- 左側：公司標誌與賣方資料 -->
@@ -115,7 +115,7 @@
                     <input type="file" id="logoInput" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'logoPreview')">
                 </div>
 
-                <!-- 賣方公司詳細資料 (單行無換行) -->
+                <!-- 賣方公司詳細資料 -->
                 <div class="space-y-0.5 text-xs">
                     <input type="text" id="sellerName" class="font-bold text-gray-800 text-base w-full focus:outline-none focus:bg-gray-50 rounded px-1" value="寬聯資訊股份有限公司" placeholder="公司名稱">
                     
@@ -158,7 +158,7 @@
             </div>
         </div>
 
-        <!-- 買方 / 客戶資料區 (縮減間距) -->
+        <!-- 買方 / 客戶資料區 -->
         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/60 mb-4">
             <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">買方 / 客戶資料 (CLIENT INFORMATION)</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-y-1.5 gap-x-6">
@@ -190,7 +190,7 @@
             </div>
         </div>
 
-        <!-- 人力服務報價表格 (參考官方表格結構) -->
+        <!-- 人力服務報價表格 (項次不換列、金額與項次均可自訂填寫) -->
         <div class="border border-gray-300 rounded-lg overflow-hidden mb-4 shadow-sm">
             
             <!-- 表頭專案資訊 (專案名稱 & 服務期間) -->
@@ -209,18 +209,18 @@
                 </div>
             </div>
 
-            <!-- 明細表格 (項次、項目、人數、月份、單價、金額) -->
+            <!-- 明細表格 (項次標頭加強不換列) -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-200 text-gray-800 text-xs font-bold border-b border-gray-300">
-                            <th class="py-2 px-2 w-10 text-center border-r border-gray-300">項次</th>
-                            <th class="py-2 px-3 border-r border-gray-300">項目 (角色與技能需求說明)</th>
-                            <th class="py-2 px-2 w-14 text-center border-r border-gray-300">人數</th>
-                            <th class="py-2 px-2 w-14 text-center border-r border-gray-300">月份</th>
-                            <th class="py-2 px-2 w-24 text-right border-r border-gray-300">單價 (人/月)</th>
-                            <th class="py-2 px-3 w-28 text-right">金額</th>
-                            <th class="py-2 px-2 w-8 text-center no-print"></th>
+                            <th class="py-2.5 px-2 w-12 text-center border-r border-gray-300 whitespace-nowrap">項次</th>
+                            <th class="py-2.5 px-3 border-r border-gray-300">項目 (角色與技能需求說明)</th>
+                            <th class="py-2.5 px-2 w-14 text-center border-r border-gray-300 whitespace-nowrap">人數</th>
+                            <th class="py-2.5 px-2 w-14 text-center border-r border-gray-300 whitespace-nowrap">月份</th>
+                            <th class="py-2.5 px-2 w-28 text-right border-r border-gray-300 whitespace-nowrap">單價 (人/月)</th>
+                            <th class="py-2.5 px-3 w-32 text-right whitespace-nowrap">金額</th>
+                            <th class="py-2.5 px-2 w-8 text-center no-print"></th>
                         </tr>
                     </thead>
                     <tbody id="itemsTableBody" class="divide-y divide-gray-200 text-xs">
@@ -233,7 +233,7 @@
         <!-- 新增人力項目按鈕 -->
         <div class="mb-5 no-print">
             <button onclick="addItem()" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition duration-200 flex items-center gap-2">
-                <i class="fa-solid fa-user-plus text-[10px]"></i> 新增人力報價項目
+                <i class="fa-solid fa-user-plus text-[10px]"></i> 新增報價項目
             </button>
         </div>
 
@@ -270,10 +270,10 @@
                 <div class="space-y-2 text-xs bg-gray-50/80 p-3 rounded-xl border border-gray-100">
                     <!-- 切換計算方式：自動計算 / 一口價手動輸入 -->
                     <div class="flex justify-between items-center text-gray-500 pb-1 border-b border-gray-200 no-print">
-                        <span class="text-[11px]">計費模式：</span>
+                        <span class="text-[11px]">總額計費模式：</span>
                         <select id="calcMode" onchange="toggleCalcMode()" class="text-xs bg-white border border-gray-300 rounded px-1.5 py-0.5 focus:outline-none">
-                            <option value="auto" selected>自動計算 (人數×月份×單價)</option>
-                            <option value="lumpSum">一口價 (手動輸入小計)</option>
+                            <option value="auto" selected>明細欄位加總</option>
+                            <option value="lumpSum">整份報價一口價 (手動小計)</option>
                         </select>
                     </div>
 
@@ -361,9 +361,10 @@
         // 初始化日期為今日
         document.getElementById('quoteDate').valueAsDate = new Date();
 
-        // 人力報價項目資料
+        // 預設人力報價項目
         let items = [
             { 
+                itemNo: '1',
                 description: `資深程式設計師(PG)
 ●具.NET開發經驗 5年(含)以上
 ●具有複雜Store Procedure及報表開發經驗
@@ -372,7 +373,8 @@
 ●熟悉SSIS及ASP.NET、Visual Studio 2019、Visual Studio 2022開發工具`, 
                 people: 2, 
                 months: 12, 
-                price: 140000 
+                price: 140000,
+                customAmount: 3360000
             }
         ];
 
@@ -388,25 +390,26 @@
             tbody.innerHTML = '';
 
             items.forEach((item, index) => {
-                const amount = Math.round(item.people * item.months * item.price);
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 transition align-top';
                 tr.innerHTML = `
-                    <td class="py-2 px-2 text-center text-gray-500 font-medium text-xs border-r border-gray-200 pt-3">${index + 1}</td>
+                    <td class="py-1.5 px-1 text-center border-r border-gray-200 pt-2.5">
+                        <input type="text" value="${escapeHtml(item.itemNo || (index + 1).toString())}" onchange="updateItem(${index}, 'itemNo', this.value)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-0.5 py-0.5 border border-transparent focus:border-gray-300 font-medium text-gray-600">
+                    </td>
                     <td class="py-1.5 px-3 border-r border-gray-200">
-                        <textarea oninput="autoResizeTextarea(this); updateItem(${index}, 'description', this.value)" class="w-full bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 resize-none overflow-hidden text-xs leading-relaxed" rows="3" placeholder="請輸入角色職稱與需求說明">${escapeHtml(item.description)}</textarea>
+                        <textarea oninput="autoResizeTextarea(this); updateItem(${index}, 'description', this.value)" class="w-full bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 resize-none overflow-hidden text-xs leading-relaxed" rows="3" placeholder="請輸入項目名稱或技能需求說明">${escapeHtml(item.description)}</textarea>
                     </td>
-                    <td class="py-1.5 px-2 text-center border-r border-gray-200 pt-2.5">
-                        <input type="number" min="1" value="${item.people}" onchange="updateItem(${index}, 'people', parseFloat(this.value) || 0)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 no-spinner font-medium">
+                    <td class="py-1.5 px-1 text-center border-r border-gray-200 pt-2.5">
+                        <input type="number" min="0" value="${item.people !== undefined && item.people !== null ? item.people : ''}" onchange="updateItemCalc(${index}, 'people', this.value)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-0.5 py-0.5 border border-transparent focus:border-gray-300 no-spinner font-medium">
                     </td>
-                    <td class="py-1.5 px-2 text-center border-r border-gray-200 pt-2.5">
-                        <input type="number" min="1" value="${item.months}" onchange="updateItem(${index}, 'months', parseFloat(this.value) || 0)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 no-spinner font-medium">
+                    <td class="py-1.5 px-1 text-center border-r border-gray-200 pt-2.5">
+                        <input type="number" min="0" value="${item.months !== undefined && item.months !== null ? item.months : ''}" onchange="updateItemCalc(${index}, 'months', this.value)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-0.5 py-0.5 border border-transparent focus:border-gray-300 no-spinner font-medium">
                     </td>
                     <td class="py-1.5 px-2 text-right border-r border-gray-200 pt-2.5">
-                        <input type="number" min="0" value="${item.price}" onchange="updateItem(${index}, 'price', parseFloat(this.value) || 0)" class="w-full text-right bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 no-spinner font-medium">
+                        <input type="number" min="0" value="${item.price !== undefined && item.price !== null ? item.price : ''}" onchange="updateItemCalc(${index}, 'price', this.value)" class="w-full text-right bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 no-spinner font-medium">
                     </td>
-                    <td class="py-2.5 px-3 text-right font-bold text-gray-800 pt-3 whitespace-nowrap">
-                        ${amount.toLocaleString()}
+                    <td class="py-1.5 px-2 text-right pt-2.5">
+                        <input type="number" min="0" id="amountInput_${index}" value="${item.customAmount !== undefined ? item.customAmount : ''}" onchange="updateItemAmount(${index}, this.value)" class="w-full text-right bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 no-spinner font-bold text-gray-800" placeholder="0">
                     </td>
                     <td class="py-2.5 px-2 text-center no-print pt-3">
                         <button onclick="removeItem(${index})" class="text-gray-300 hover:text-red-500 transition px-1">
@@ -421,6 +424,52 @@
                 autoResizeTextarea(textarea);
             });
 
+            calculateTotals();
+        }
+
+        // 新增報價項目
+        function addItem() {
+            items.push({ 
+                itemNo: (items.length + 1).toString(),
+                description: '', 
+                people: '', 
+                months: '', 
+                price: '',
+                customAmount: ''
+            });
+            renderItems();
+        }
+
+        // 刪除品項
+        function removeItem(index) {
+            items.splice(index, 1);
+            renderItems();
+        }
+
+        // 一般更新
+        function updateItem(index, field, value) {
+            items[index][field] = value;
+        }
+
+        // 當輸入人數、月份或單價時，自動重新計算金額
+        function updateItemCalc(index, field, value) {
+            items[index][field] = value === '' ? '' : parseFloat(value) || 0;
+            
+            const p = parseFloat(items[index].people) || 0;
+            const m = parseFloat(items[index].months) || 0;
+            const pr = parseFloat(items[index].price) || 0;
+
+            if (p > 0 || m > 0 || pr > 0) {
+                items[index].customAmount = Math.round(p * m * pr);
+                const input = document.getElementById(`amountInput_${index}`);
+                if (input) input.value = items[index].customAmount;
+            }
+            calculateTotals();
+        }
+
+        // 手動直接更改金額
+        function updateItemAmount(index, value) {
+            items[index].customAmount = value === '' ? 0 : Math.round(parseFloat(value) || 0);
             calculateTotals();
         }
 
@@ -443,31 +492,16 @@
             calculateTotals();
         }
 
-        // 新增人力報價項目
-        function addItem() {
-            items.push({ description: '', people: 1, months: 1, price: 0 });
-            renderItems();
-        }
-
-        // 刪除品項
-        function removeItem(index) {
-            items.splice(index, 1);
-            renderItems();
-        }
-
-        // 更新單一品項值
-        function updateItem(index, field, value) {
-            items[index][field] = value;
-            calculateTotals();
-        }
-
-        // 計算總金額 (強行去除所有小數點)
+        // 計算總金額 (徹底去除小數點)
         function calculateTotals() {
             const mode = document.getElementById('calcMode').value;
             let subtotal = 0;
 
             if (mode === 'auto') {
-                subtotal = Math.round(items.reduce((sum, item) => sum + (item.people * item.months * item.price), 0));
+                subtotal = Math.round(items.reduce((sum, item) => {
+                    const amt = (item.customAmount !== '' && item.customAmount !== undefined) ? parseFloat(item.customAmount) || 0 : 0;
+                    return sum + amt;
+                }, 0));
                 document.getElementById('subtotalInput').value = subtotal;
             } else {
                 subtotal = Math.round(parseFloat(document.getElementById('subtotalInput').value) || 0);
@@ -479,16 +513,6 @@
 
             document.getElementById('taxDisplay').textContent = `NT$ ${tax.toLocaleString()}`;
             document.getElementById('grandTotalDisplay').textContent = `NT$ ${grandTotal.toLocaleString()}`;
-
-            // 即時更新表格內金額
-            const tbody = document.getElementById('itemsTableBody');
-            items.forEach((item, index) => {
-                const amountTd = tbody.rows[index]?.cells[5];
-                if (amountTd) {
-                    const amount = Math.round(item.people * item.months * item.price);
-                    amountTd.textContent = amount.toLocaleString();
-                }
-            });
         }
 
         // 圖片上傳處置 (Logo / 印章)
@@ -539,6 +563,7 @@
 
             items = [
                 { 
+                    itemNo: '1',
                     description: `資深程式設計師(PG)
 ●具.NET開發經驗 5年(含)以上
 ●具有複雜Store Procedure及報表開發經驗
@@ -547,7 +572,8 @@
 ●熟悉SSIS及ASP.NET、Visual Studio 2019、Visual Studio 2022開發工具`, 
                     people: 2, 
                     months: 12, 
-                    price: 140000 
+                    price: 140000,
+                    customAmount: 3360000
                 }
             ];
             renderItems();
