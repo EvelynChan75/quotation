@@ -209,7 +209,7 @@
                 </div>
             </div>
 
-            <!-- 明細表格 (0 金額顯示空白) -->
+            <!-- 明細表格 (千分位加強版) -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -240,7 +240,7 @@
         <!-- 結算總計與簽署蓋章區 -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-gray-200 pt-4">
             
-            <!-- 左側：備註條款 與 客戶簽署區 (框框加大至 h-28) -->
+            <!-- 左側：備註條款 與 大尺寸客戶簽署區 -->
             <div class="space-y-4">
                 <div>
                     <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">備註</h4>
@@ -250,14 +250,15 @@
 4. 本報價單未經本公司書面同意，不得對外公開本報價單之存在或內容</textarea>
                 </div>
 
-                <!-- 客戶簽署 / 蓋章回傳區 (加大框框) -->
-                <div class="border border-gray-200 rounded-lg p-3 bg-slate-50/50 space-y-2">
+                <!-- 客戶簽署 / 蓋章回傳區 (加大框框 min-h-[140px]) -->
+                <div class="border border-gray-200 rounded-lg p-3.5 bg-slate-50/50 space-y-3">
                     <div class="flex justify-between items-center text-xs font-bold text-gray-700">
                         <span>客戶簽署 / 蓋章回傳區：</span>
                         <span class="text-[10px] text-gray-400 font-normal">(請蓋章後掃描或傳真回覆)</span>
                     </div>
-                    <div class="h-28 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-white">
-                        <span class="text-xs text-gray-300">客戶確認簽章處</span>
+                    <!-- 大尺寸蓋章簽名視窗 -->
+                    <div class="min-h-[140px] border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-white p-2">
+                        <span class="text-xs text-gray-300 font-medium">客戶確認簽章處</span>
                     </div>
                     <div class="flex justify-between items-center text-[11px] text-gray-500 pt-1">
                         <span>簽署日期： ____ 年 ____ 月 ____ 日</span>
@@ -267,9 +268,9 @@
 
             <!-- 右側：金額計算與公司蓋章 -->
             <div class="space-y-4">
-                <div class="space-y-2 text-xs bg-gray-50/80 p-3 rounded-xl border border-gray-100">
+                <div class="space-y-2.5 text-xs bg-gray-50/80 p-3.5 rounded-xl border border-gray-100">
                     <!-- 切換計算方式：自動計算 / 一口價手動輸入 -->
-                    <div class="flex justify-between items-center text-gray-500 pb-1 border-b border-gray-200 no-print">
+                    <div class="flex justify-between items-center text-gray-500 pb-1.5 border-b border-gray-200 no-print">
                         <span class="text-[11px]">總額計費模式：</span>
                         <select id="calcMode" onchange="toggleCalcMode()" class="text-xs bg-white border border-gray-300 rounded px-1.5 py-0.5 focus:outline-none">
                             <option value="auto" selected>明細欄位加總</option>
@@ -277,7 +278,7 @@
                         </select>
                     </div>
 
-                    <!-- 小計 -->
+                    <!-- 小計 (自動帶千分位) -->
                     <div class="flex justify-between items-center text-gray-600">
                         <span>小計 (Subtotal)</span>
                         <div class="flex items-center gap-1 font-medium">
@@ -302,7 +303,7 @@
                         <span id="taxDisplay" class="font-medium">NT$ 0</span>
                     </div>
 
-                    <!-- 總計 -->
+                    <!-- 總計 (千分位顯示) -->
                     <div class="border-t border-gray-200 pt-2 mt-1 flex justify-between items-center">
                         <span class="text-sm font-bold text-gray-900">總計 (Total)</span>
                         <span id="grandTotalDisplay" class="text-lg font-extrabold text-cyan-900">NT$ 0</span>
@@ -398,7 +399,7 @@
             return rounded.toLocaleString('en-US');
         }
 
-        // 解析千分位字串為數字
+        // 解析千分位字串為純數字
         function parseFormattedNumber(val) {
             if (!val) return 0;
             const cleanStr = String(val).replace(/,/g, '');
@@ -413,6 +414,11 @@
             items.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 transition align-top';
+                
+                // 計算或取得千分位格式的金額
+                const formattedPrice = formatNumber(item.price);
+                const formattedAmount = formatNumber(item.customAmount);
+
                 tr.innerHTML = `
                     <td class="py-1.5 px-1 text-center border-r border-gray-200 pt-2.5">
                         <input type="text" value="${escapeHtml(item.itemNo || (index + 1).toString())}" onchange="updateItem(${index}, 'itemNo', this.value)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-0.5 py-0.5 border border-transparent focus:border-gray-300 font-medium text-gray-600">
@@ -427,11 +433,15 @@
                         <input type="number" min="0" value="${item.months !== undefined && item.months !== null ? item.months : ''}" onchange="updateItemCalc(${index}, 'months', this.value)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-0.5 py-0.5 border border-transparent focus:border-gray-300 no-spinner font-medium">
                     </td>
                     <td class="py-1.5 px-2 text-right border-r border-gray-200 pt-2.5">
-                        <input type="number" min="0" value="${item.price !== undefined && item.price !== null ? item.price : ''}" onchange="updateItemCalc(${index}, 'price', this.value)" class="w-full text-right bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 no-spinner font-medium">
+                        <input type="text" value="${formattedPrice}" 
+                               onfocus="this.value = items[${index}].price || ''" 
+                               onblur="updateItemPrice(${index}, this.value)" 
+                               onchange="updateItemPrice(${index}, this.value)" 
+                               class="w-full text-right bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 font-medium text-gray-700" placeholder="">
                     </td>
                     <td class="py-1.5 px-2 text-right pt-2.5">
                         <input type="text" id="amountInput_${index}" 
-                               value="${formatNumber(item.customAmount)}" 
+                               value="${formattedAmount}" 
                                onfocus="this.value = (items[${index}].customAmount === 0 || items[${index}].customAmount === '') ? '' : items[${index}].customAmount" 
                                onblur="updateItemAmount(${index}, this.value)" 
                                onchange="updateItemAmount(${index}, this.value)" 
@@ -472,12 +482,20 @@
             renderItems();
         }
 
-        // 一般更新
+        // 一般欄位更新
         function updateItem(index, field, value) {
             items[index][field] = value;
         }
 
-        // 當輸入人數、月份或單價時，自動重新計算金額並轉為千分位
+        // 修改單價 (自動千分位)
+        function updateItemPrice(index, value) {
+            const num = parseFormattedNumber(value);
+            items[index].price = num || '';
+            updateItemCalc(index, 'price', num);
+            renderItems();
+        }
+
+        // 當輸入人數、月份或單價時，自動重新計算金額並帶入千分位
         function updateItemCalc(index, field, value) {
             items[index][field] = value === '' ? '' : parseFloat(value) || 0;
             
@@ -496,7 +514,7 @@
             calculateTotals();
         }
 
-        // 手動直接更改金額
+        // 手動直接更改金額 (自動帶入千分位)
         function updateItemAmount(index, value) {
             const num = parseFormattedNumber(value);
             items[index].customAmount = num;
@@ -525,7 +543,7 @@
             calculateTotals();
         }
 
-        // 計算總金額 (所有數字帶入千分位格式)
+        // 計算總金額 (確保全部帶千分位格式)
         function calculateTotals() {
             const mode = document.getElementById('calcMode').value;
             let subtotal = 0;
