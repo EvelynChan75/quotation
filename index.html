@@ -90,7 +90,7 @@
     <div class="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-xl border border-gray-200 print-container relative">
         
         <!-- 頂部區塊：Logo & 賣方資訊 / 報價單標題 -->
-        <div class="flex flex-col md:flex-row justify-between items-start border-b border-gray-200 pb-8 mb-8 gap-6">
+        <div class="flex flex-col md:flex-row justify-between items-start border-b border-gray-200 pb-8 mb-6 gap-6">
             
             <!-- 左側：公司標誌與賣方資料 -->
             <div class="w-full md:w-2/3 space-y-4">
@@ -99,7 +99,6 @@
                     <div id="logoPreview" class="h-full flex items-center">
                         <!-- 寬聯資訊 官方 Logo -->
                         <svg class="h-12 w-auto" viewBox="0 0 250 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <!-- 六角形幾何環群組 -->
                             <g transform="translate(5, 10) scale(0.95)">
                                 <polygon points="12,35 20,20 35,20 43,35 35,50 20,50" stroke="#88c437" stroke-width="3" fill="none"/>
                                 <polygon points="28,48 36,33 51,33 59,48 51,63 36,63" stroke="#e9a818" stroke-width="3.5" fill="none"/>
@@ -107,7 +106,6 @@
                                 <polygon points="63,48 71,33 86,33 94,48 86,63 71,63" stroke="#e9a818" stroke-width="3.5" fill="none"/>
                                 <polygon points="78,22 86,7 101,7 109,22 101,37 86,37" stroke="#e06d10" stroke-width="4.5" fill="none"/>
                             </g>
-                            <!-- 公司名稱標準字 -->
                             <text x="115" y="48" font-family="'Noto Sans TC', sans-serif" font-weight="900" font-size="28" fill="#231815" letter-spacing="2">寬聯資訊</text>
                         </svg>
                     </div>
@@ -150,7 +148,7 @@
                     <p class="text-xs text-gray-400 tracking-widest uppercase mt-1">Quotation</p>
                 </div>
 
-                <!-- 報價日期單獨顯示區 -->
+                <!-- 報價日期 -->
                 <div class="inline-block bg-gray-50 p-3 rounded-lg border border-gray-100 w-full md:w-auto text-left">
                     <div class="flex items-center justify-between md:justify-end gap-3 text-sm">
                         <span class="text-gray-500 font-medium">報價日期：</span>
@@ -160,17 +158,23 @@
             </div>
         </div>
 
-        <!-- 買方 / 客戶資料區 (修正版面：無地址，電話與 Email 往下移動對齊) -->
+        <!-- 專案名稱 / 案名 區塊 -->
+        <div class="bg-cyan-50/50 p-4 rounded-xl border border-cyan-100 mb-6 flex flex-col md:flex-row items-start md:items-center gap-2">
+            <span class="text-xs font-bold text-cyan-900 uppercase tracking-wider whitespace-nowrap shrink-0">專案名稱 (PROJECT)：</span>
+            <input type="text" id="projectName" class="font-bold text-gray-800 text-base w-full bg-transparent focus:outline-none focus:bg-white rounded px-2 py-1 border border-transparent focus:border-cyan-300 transition" placeholder="請輸入專案案名" value="分行銷售例外報表新增優化及功能開發 (2027年)">
+        </div>
+
+        <!-- 買方 / 客戶資料區 -->
         <div class="bg-slate-50 p-6 rounded-xl border border-slate-200/60 mb-8">
             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">買方 / 客戶資料 (CLIENT INFORMATION)</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
-                <!-- Row 1: 左側公司名稱，右側留空對齊 -->
+                <!-- Row 1: 公司名稱 -->
                 <div class="flex items-center">
                     <input type="text" id="clientName" class="font-bold text-gray-800 text-base w-full bg-transparent focus:outline-none focus:bg-white rounded px-2 py-1 border border-transparent focus:border-gray-300" placeholder="客戶 / 公司名稱" value="台新國際商業銀行股份有限公司">
                 </div>
                 <div class="hidden md:block"></div>
 
-                <!-- Row 2: 左側統一編號，右側電話 -->
+                <!-- Row 2: 統一編號與電話 -->
                 <div class="flex items-center text-sm text-gray-600">
                     <span class="text-xs text-gray-400 w-20 shrink-0 whitespace-nowrap">統一編號：</span>
                     <input type="text" id="clientTaxId" class="w-full bg-transparent focus:outline-none focus:bg-white rounded px-2 py-0.5 border border-transparent focus:border-gray-300" placeholder="買方統編" value="86519539">
@@ -180,7 +184,7 @@
                     <input type="text" id="clientPhone" class="w-full bg-transparent focus:outline-none focus:bg-white rounded px-2 py-0.5 border border-transparent focus:border-gray-300" placeholder="聯絡電話" value="02-8798-9999#8538">
                 </div>
 
-                <!-- Row 3: 左側聯絡人，右側 Email -->
+                <!-- Row 3: 聯絡人與 Email -->
                 <div class="flex items-center text-sm text-gray-600">
                     <span class="text-xs text-gray-400 w-20 shrink-0 whitespace-nowrap">聯絡人：</span>
                     <input type="text" id="clientContact" class="w-full bg-transparent focus:outline-none focus:bg-white rounded px-2 py-0.5 border border-transparent focus:border-gray-300" placeholder="聯絡人姓名/職稱" value="陳永峰 經理">
@@ -192,18 +196,18 @@
             </div>
         </div>
 
-        <!-- 報價項目表格 -->
+        <!-- 報價項目表格 (品名欄位擴大並改為多行多文字) -->
         <div class="overflow-x-auto mb-8">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="border-b-2 border-gray-800 text-gray-700 text-xs uppercase tracking-wider">
-                        <th class="py-3 px-2 w-10 text-center">#</th>
+                        <th class="py-3 px-2 w-8 text-center">#</th>
                         <th class="py-3 px-2">品名 / 服務描述</th>
-                        <th class="py-3 px-2 w-20 text-center">數量</th>
-                        <th class="py-3 px-2 w-20 text-center">單位</th>
-                        <th class="py-3 px-2 w-28 text-right">單價</th>
-                        <th class="py-3 px-2 w-32 text-right">小計</th>
-                        <th class="py-3 px-2 w-10 text-center no-print"></th>
+                        <th class="py-3 px-2 w-16 text-center">數量</th>
+                        <th class="py-3 px-2 w-16 text-center">單位</th>
+                        <th class="py-3 px-2 w-24 text-right">單價</th>
+                        <th class="py-3 px-2 w-28 text-right">小計</th>
+                        <th class="py-3 px-2 w-8 text-center no-print"></th>
                     </tr>
                 </thead>
                 <tbody id="itemsTableBody" class="divide-y divide-gray-100 text-sm">
@@ -263,10 +267,9 @@
                         <div class="text-xs text-gray-400">
                             公司蓋章 / 負責人簽署：
                         </div>
-                        <!-- 印章圖片上傳/預覽 -->
+                        <!-- 印章圖片上傳/預覽 (藍色橢圓章) -->
                         <div class="relative group w-36 h-24 border-2 border-dashed border-transparent hover:border-cyan-500 rounded-lg flex items-center justify-center cursor-pointer overflow-hidden" onclick="document.getElementById('stampInput').click()">
                             <div id="stampPreview" class="w-full h-full flex items-center justify-center p-1">
-                                <!-- 藍色雙圈橢圓公司報價專用章 -->
                                 <svg class="w-32 h-20" viewBox="0 0 200 130" xmlns="http://www.w3.org/2000/svg">
                                     <ellipse cx="100" cy="65" rx="95" ry="60" fill="none" stroke="#255fa3" stroke-width="3" opacity="0.85"/>
                                     <ellipse cx="100" cy="65" rx="89" ry="54" fill="none" stroke="#255fa3" stroke-width="1.5" opacity="0.85"/>
@@ -278,7 +281,6 @@
                                     </text>
 
                                     <text x="100" y="58" fill="#255fa3" font-size="19" font-weight="900" text-anchor="middle" opacity="0.85" letter-spacing="2">報價專用章</text>
-                                    
                                     <text x="100" y="78" fill="#255fa3" font-size="12" font-weight="bold" text-anchor="middle" opacity="0.85" letter-spacing="0.5">TEL:02-27921516</text>
 
                                     <path id="bottomArc" d="M 25,65 A 75,44 0 0,0 175,65" fill="none" />
@@ -316,11 +318,17 @@
 
         // 預設項目資料
         let items = [
-            { description: '企業官網響應式 UI/UX 視覺設計', quantity: 1, unit: '項', price: 45000 },
+            { description: '分行銷售例外報表新增優化及功能開發 (2027年)', quantity: 1, unit: '項', price: 150000 },
             { description: '前端網頁開發與互動動畫整合', quantity: 1, unit: '項', price: 55000 },
             { description: '後端 API 串接與資料庫系統架設', quantity: 1, unit: '項', price: 40000 },
             { description: '雲端伺服器部署與安全性設定', quantity: 1, unit: '次', price: 12000 }
         ];
+
+        // 高度自動適應 textarea
+        function autoResizeTextarea(element) {
+            element.style.height = 'auto';
+            element.style.height = element.scrollHeight + 'px';
+        }
 
         // 渲染品項表格
         function renderItems() {
@@ -330,31 +338,35 @@
             items.forEach((item, index) => {
                 const subtotal = item.quantity * item.price;
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 transition';
+                tr.className = 'hover:bg-gray-50 transition align-top';
                 tr.innerHTML = `
-                    <td class="py-3 px-2 text-center text-gray-400 text-xs">${index + 1}</td>
+                    <td class="py-3 px-2 text-center text-gray-400 text-xs pt-4">${index + 1}</td>
                     <td class="py-3 px-2">
-                        <input type="text" value="${escapeHtml(item.description)}" onchange="updateItem(${index}, 'description', this.value)" class="w-full bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300" placeholder="品名細項">
+                        <textarea oninput="autoResizeTextarea(this); updateItem(${index}, 'description', this.value)" class="w-full bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300 resize-none overflow-hidden text-sm leading-relaxed" rows="1" placeholder="品名細項/服務描述">${escapeHtml(item.description)}</textarea>
                     </td>
                     <td class="py-3 px-2 text-center">
-                        <input type="number" min="1" value="${item.quantity}" onchange="updateItem(${index}, 'quantity', parseFloat(this.value) || 0)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 no-spinner">
+                        <input type="number" min="0" value="${item.quantity}" onchange="updateItem(${index}, 'quantity', parseFloat(this.value) || 0)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300 no-spinner">
                     </td>
                     <td class="py-3 px-2 text-center">
-                        <input type="text" value="${escapeHtml(item.unit)}" onchange="updateItem(${index}, 'unit', this.value)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300" placeholder="單位">
+                        <input type="text" value="${escapeHtml(item.unit)}" onchange="updateItem(${index}, 'unit', this.value)" class="w-full text-center bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300" placeholder="單位">
                     </td>
                     <td class="py-3 px-2 text-right">
-                        <input type="number" min="0" value="${item.price}" onchange="updateItem(${index}, 'price', parseFloat(this.value) || 0)" class="w-full text-right bg-transparent focus:outline-none focus:bg-white rounded px-1 py-0.5 border border-transparent focus:border-gray-300 no-spinner">
+                        <input type="number" min="0" value="${item.price}" onchange="updateItem(${index}, 'price', parseFloat(this.value) || 0)" class="w-full text-right bg-transparent focus:outline-none focus:bg-white rounded px-1 py-1 border border-transparent focus:border-gray-300 no-spinner">
                     </td>
-                    <td class="py-3 px-2 text-right font-medium text-gray-700">
+                    <td class="py-3 px-2 text-right font-medium text-gray-700 pt-4 whitespace-nowrap">
                         NT$ ${subtotal.toLocaleString()}
                     </td>
-                    <td class="py-3 px-2 text-center no-print">
+                    <td class="py-3 px-2 text-center no-print pt-4">
                         <button onclick="removeItem(${index})" class="text-gray-300 hover:text-red-500 transition px-1">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
+
+                // 初始化輸入框高度
+                const textarea = tr.querySelector('textarea');
+                autoResizeTextarea(textarea);
             });
 
             calculateTotals();
@@ -375,7 +387,7 @@
         // 更新單一品項值
         function updateItem(index, field, value) {
             items[index][field] = value;
-            renderItems();
+            calculateTotals();
         }
 
         // 計算總金額
@@ -388,6 +400,15 @@
             document.getElementById('subtotalDisplay').textContent = `NT$ ${subtotal.toLocaleString()}`;
             document.getElementById('taxDisplay').textContent = `NT$ ${tax.toLocaleString()}`;
             document.getElementById('grandTotalDisplay').textContent = `NT$ ${grandTotal.toLocaleString()}`;
+
+            // 即時更新小計欄位
+            const tbody = document.getElementById('itemsTableBody');
+            items.forEach((item, index) => {
+                const subtotalTd = tbody.rows[index]?.cells[5];
+                if (subtotalTd) {
+                    subtotalTd.textContent = `NT$ ${(item.quantity * item.price).toLocaleString()}`;
+                }
+            });
         }
 
         // 圖片上傳處置 (Logo / 印章)
@@ -421,6 +442,7 @@
             document.getElementById('sellerEmail').value = 'lynn.zhan@kli.com.tw';
             document.getElementById('sellerAddress').value = '114 台北市內湖區新湖二路211號6樓';
 
+            document.getElementById('projectName').value = '分行銷售例外報表新增優化及功能開發 (2027年)';
             document.getElementById('clientName').value = '台新國際商業銀行股份有限公司';
             document.getElementById('clientTaxId').value = '86519539';
             document.getElementById('clientContact').value = '陳永峰 經理';
@@ -434,7 +456,7 @@
 4. 本報價單未經本公司書面同意，不得對外公開本報價單之存在或內容`;
 
             items = [
-                { description: '企業官網響應式 UI/UX 視覺設計', quantity: 1, unit: '項', price: 45000 },
+                { description: '分行銷售例外報表新增優化及功能開發 (2027年)', quantity: 1, unit: '項', price: 150000 },
                 { description: '前端網頁開發與互動動畫整合', quantity: 1, unit: '項', price: 55000 },
                 { description: '後端 API 串接與資料庫系統架設', quantity: 1, unit: '項', price: 40000 },
                 { description: '雲端伺服器部署與安全性設定', quantity: 1, unit: '次', price: 12000 }
@@ -444,6 +466,7 @@
 
         // 清空欄位
         function clearData() {
+            document.getElementById('projectName').value = '';
             document.getElementById('clientName').value = '';
             document.getElementById('clientTaxId').value = '';
             document.getElementById('clientContact').value = '';
